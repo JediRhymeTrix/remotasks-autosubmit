@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "Remotasks Auto-submit",
+    "version": "1.0",
+    "permissions": ["tabs", "notifications"],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.remotasks.com/tasks",
+                "*://remotasks.com/tasks",
+                "*://*.remotasks.com/*/tasks",
+                "*://remotasks.com/*/tasks"
+            ],
+            "js": ["content.js"]
+        }
+    ],
+    "icons": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+    }
+}

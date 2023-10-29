@@ -60,6 +60,9 @@ function stopWatching(button) {
     intervalId = null;
     button.innerHTML = "Start Auto-submit Watcher";
     button.style.backgroundColor = "#4CAF50"; // Material Design green
+
+    // Send a message to background.js to clear the progress notification
+    chrome.runtime.sendMessage({ message: "stopWatching" });
 }
 
 // Function to find the timer on the page

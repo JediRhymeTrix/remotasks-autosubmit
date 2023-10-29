@@ -21,10 +21,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.notifications.create(notificationId, {
             type: "progress",
             iconUrl: "icon.png", // Replace with actual icon URL
-            title: "Remotask Tracking In Progress",
+            title: "Remotasks Tracking in Progress",
             message: totalMinutes + " minutes remaining",
             progress: Math.round((totalMinutes / 60) * 100), // Convert minutes to progress out of 100
         });
+    } else if (request.message === "stopWatching") {
+        // Clear the progress notification
+        chrome.notifications.clear(notificationId);
     }
 });
 

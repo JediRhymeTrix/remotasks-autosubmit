@@ -1,23 +1,31 @@
 # Remotasks Auto-submit
 
-Remotasks Auto-submit is a Chrome extension designed to automatically submit tasks when the timer ends.
+This Chrome extension automatically submits tasks on Remotasks when the timer ends.
 
 ## Features
 
-- Auto-submit tasks when the timer ends
-- Display a persistent progress notification showing the time left
-- Focus on the tab and window of the extension when the notification is clicked
+- Automatically submit tasks: The extension automatically submits your task when the timer ends.
+- Notifications: The extension shows notifications to keep you updated about the timer progress.
+- Sound notification: The extension can play a sound when the timer ends.
+- Options page: You can customize the extension's behavior on the options page.
+
+## Options
+
+- Play sound when timer ends: You can choose whether to play a sound when the timer ends. This option is enabled by default. You can change it on the extension's options page.
 
 ## Installation
 
-1. Download or clone this repository to your local machine.
-2. Open Chrome and navigate to `chrome://extensions/`.
-3. Enable "Developer mode" at the top-right.
-4. Click "Load unpacked" at the top-left and select the directory where you downloaded or cloned this repository.
+1. Download or clone this repository.
+2. Open Chrome and go to `chrome://extensions`.
+3. Enable Developer mode.
+4. Click on `Load unpacked` and select the directory where you cloned or downloaded this repository.
+5. The extension should now be installed and ready to use.
 
 ## Usage
 
-After installing the extension, navigate to the Remotasks website and start a task. The extension will automatically submit the task when the timer ends.
+1. Start a task on Remotasks.
+2. The extension will automatically submit the task when the timer ends.
+3. If the "Play sound when timer ends" option is enabled, the extension will play a sound when the timer ends.
 
 ## Contributing
 

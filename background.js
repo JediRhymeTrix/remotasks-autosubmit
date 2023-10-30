@@ -1,5 +1,7 @@
 let tabId;
+let progressTabId; // tab ID for the progress notification
 let notificationId = "timerProgressNotification"; // ID for the progress notification
+let taskSubmittedNotificationId; // ID for the task submitted notification
 
 // Create an Audio object
 let audio = new Audio("assets/audio/notification.mp3");
@@ -11,7 +13,10 @@ function handleTimerEnded(sender) {
     // Clear the progress notification
     chrome.notifications.clear(notificationId);
 
-    chrome.notifications.create({
+    // Generate a unique ID for the task submitted notification
+    taskSubmittedNotificationId = "taskSubmittedNotification" + Date.now();
+
+    chrome.notifications.create(taskSubmittedNotificationId, {
         type: "basic",
         iconUrl: "icon.png", // Replace with actual icon URL
         title: "Remotasks Task Submitted",
@@ -27,8 +32,8 @@ function handleTimerEnded(sender) {
 }
 
 function handleUpdateTimer(sender, totalMinutes) {
-    // Save the tab ID
-    tabId = sender.tab.id;
+    // Save the tab ID for the progress notification
+    progressTabId = sender.tab.id;
 
     chrome.notifications.create(notificationId, {
         type: "progress",
@@ -55,17 +60,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 chrome.notifications.onClicked.addListener(clickedNotificationId => {
-    if (clickedNotificationId === notificationId) {
-        // Dismiss the notification
-        chrome.notifications.clear(notificationId);
+    // Dismiss the notification
+    chrome.notifications.clear(clickedNotificationId);
 
-        // Focus on the tab and window
-        if (tabId) {
-            chrome.tabs.get(tabId, function (tab) {
-                chrome.windows.update(tab.windowId, { focused: true });
-                chrome.tabs.update(tabId, { active: true });
-            });
-        }
+    // Determine which tab ID to use
+    let focusTabId =
+        clickedNotificationId === notificationId ? progressTabId : tabId;
+
+    // Focus on the tab and window
+    if (focusTabId) {
+        chrome.tabs.get(focusTabId, function (tab) {
+            chrome.windows.update(tab.windowId, { focused: true });
+            chrome.tabs.update(focusTabId, { active: true });
+        });
     }
 });
 

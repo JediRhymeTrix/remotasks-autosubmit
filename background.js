@@ -26,7 +26,10 @@ function handleTimerEnded(sender) {
     });
 }
 
-function handleUpdateTimer(totalMinutes) {
+function handleUpdateTimer(sender, totalMinutes) {
+    // Save the tab ID
+    tabId = sender.tab.id;
+
     chrome.notifications.create(notificationId, {
         type: "progress",
         iconUrl: "icon.png", // Replace with actual icon URL
@@ -45,7 +48,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.message === "timerEnded") {
         handleTimerEnded(sender);
     } else if (request.message === "updateTimer") {
-        handleUpdateTimer(request.totalMinutes);
+        handleUpdateTimer(sender, request.totalMinutes);
     } else if (request.message === "stopWatching") {
         handleStopWatching();
     }

@@ -1,3 +1,5 @@
+const DEFAULT_OPTIONS = { playSound: true, hours: 0, minutes: 0 };
+
 let tabId;
 let progressTabId; // tab ID for the progress notification
 let notificationId = "timerProgressNotification"; // ID for the progress notification
@@ -76,7 +78,7 @@ chrome.notifications.onClicked.addListener(clickedNotificationId => {
     }
 });
 
-// Default options
+// Set default options
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.sync.set({ playSound: true });
+    chrome.storage.sync.set(DEFAULT_OPTIONS);
 });

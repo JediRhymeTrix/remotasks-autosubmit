@@ -1,5 +1,4 @@
 const SUBMIT_BUTTON_TEXT = "Submit"; // Text of the target button
-const TIMER_TEXT = "0 hours, 0 minute"; // Text of the timer
 
 // Define the button styles
 const BUTTON_STYLES = {
@@ -37,17 +36,22 @@ function startWatching(button, targetButton) {
         if (timer) {
             let totalMinutes = parseTime(timer);
 
-            // Send a message to background.js to update the notification
-            chrome.runtime.sendMessage({
-                message: "updateTimer",
-                totalMinutes: totalMinutes,
-            });
+            // Get the options
+            chrome.storage.sync.get(["hours", "minutes"], function (data) {
+                let optionMinutes = data.hours * 60 + data.minutes;
 
-            if (totalMinutes === 0) {
-                targetButton.click();
-                chrome.runtime.sendMessage({ message: "timerEnded" });
-                stopWatching(button);
-            }
+                // Send a message to background.js to update the notification
+                chrome.runtime.sendMessage({
+                    message: "updateTimer",
+                    totalMinutes: totalMinutes,
+                });
+
+                if (totalMinutes <= optionMinutes) {
+                    targetButton.click();
+                    chrome.runtime.sendMessage({ message: "timerEnded" });
+                    stopWatching(button);
+                }
+            });
         }
     }, 1000);
     button.innerHTML = "Stop Auto-submit";

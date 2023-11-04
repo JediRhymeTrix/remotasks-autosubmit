@@ -4,6 +4,7 @@ let tabId;
 let progressTabId; // tab ID for the progress notification
 let notificationId = "timerProgressNotification"; // ID for the progress notification
 let taskSubmittedNotificationId; // ID for the task submitted notification
+let initialMinutes;
 
 // Create an Audio object
 let audio = new Audio("assets/audio/notification.mp3");
@@ -37,12 +38,32 @@ function handleUpdateTimer(sender, totalMinutes) {
     // Save the tab ID for the progress notification
     progressTabId = sender.tab.id;
 
-    chrome.notifications.create(notificationId, {
-        type: "progress",
-        iconUrl: "icon.png", // Replace with actual icon URL
-        title: "Remotasks Tracking in Progress",
-        message: totalMinutes + " minutes remaining",
-        progress: Math.round((totalMinutes / 60) * 100), // Convert minutes to progress out of 100
+    // Get the options
+    chrome.storage.sync.get(["hours", "minutes"], function (data) {
+        let optionMinutes = data.hours * 60 + data.minutes;
+
+        // Calculate remaining time
+        let remainingMinutes = Math.max(0, totalMinutes - optionMinutes);
+
+        // Calculate progress
+        let totalTime = initialMinutes - optionMinutes;
+        let elapsedTime = initialMinutes - totalMinutes;
+
+        let progress = 0;
+        if (totalTime > 0) {
+            progress = Math.floor((elapsedTime / totalTime) * 100);
+        }
+
+        // Ensure progress is between 0 and 100
+        progress = Math.max(0, Math.min(progress, 100));
+
+        chrome.notifications.create(notificationId, {
+            type: "progress",
+            iconUrl: "icon.png", // Replace with actual icon URL
+            title: "Remotasks Tracking in Progress",
+            message: remainingMinutes + " minutes remaining",
+            progress: progress,
+        });
     });
 }
 
@@ -52,7 +73,9 @@ function handleStopWatching() {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message === "timerEnded") {
+    if (request.message === "initialMinutes") {
+        initialMinutes = request.initialMinutes;
+    } else if (request.message === "timerEnded") {
         handleTimerEnded(sender);
     } else if (request.message === "updateTimer") {
         handleUpdateTimer(sender, request.totalMinutes);

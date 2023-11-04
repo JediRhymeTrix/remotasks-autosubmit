@@ -15,6 +15,8 @@ const BUTTON_STYLES = {
 
 let intervalId = null;
 
+let initialMinutes;
+
 window.addEventListener("load", event => {
     let button = document.createElement("button");
     button.innerHTML = "Start Auto-submit Watcher";
@@ -35,6 +37,14 @@ function startWatching(button, targetButton) {
 
         if (timer) {
             let totalMinutes = parseTime(timer);
+
+            if (initialMinutes === undefined) {
+                initialMinutes = totalMinutes;
+                chrome.runtime.sendMessage({
+                    message: "initialMinutes",
+                    initialMinutes: initialMinutes,
+                });
+            }
 
             // Get the options
             chrome.storage.sync.get(["hours", "minutes"], function (data) {

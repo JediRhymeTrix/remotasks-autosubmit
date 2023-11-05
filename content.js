@@ -30,6 +30,41 @@ window.addEventListener("load", event => {
     document.body.appendChild(button);
 });
 
+// Function to handle remaining minutes
+function handleRemainingMinutes(remainingMinutes) {
+    // If remainingMinutes hasn't changed in over 1 minute
+    if (remainingMinutes === lastRemainingMinutes && Date.now() - lastRemainingMinutesTime > 60000) {
+        // Find the SVG with data-icon="sync-alt" and click on its parent element
+        let syncIcon = document.querySelector('svg[data-icon="sync-alt"]');
+        if (syncIcon && syncIcon.parentElement) {
+            syncIcon.parentElement.click();
+        }
+    } else {
+        lastRemainingMinutes = remainingMinutes;
+        lastRemainingMinutesTime = Date.now();
+    }
+}
+
+// Function to handle option minutes
+function handleOptionMinutes(totalMinutes, optionMinutes, button, targetButton) {
+    // Calculate remaining time
+    let remainingMinutes = Math.max(0, totalMinutes - optionMinutes);
+
+    handleRemainingMinutes(remainingMinutes);
+
+    // Send a message to background.js to update the notification
+    chrome.runtime.sendMessage({
+        message: "updateTimer",
+        totalMinutes: totalMinutes,
+    });
+
+    if (totalMinutes <= optionMinutes) {
+        targetButton.click();
+        chrome.runtime.sendMessage({ message: "timerEnded" });
+        stopWatching(button);
+    }
+}
+
 // Function to start watching
 function startWatching(button, targetButton) {
     intervalId = setInterval(() => {
@@ -49,18 +84,12 @@ function startWatching(button, targetButton) {
             // Get the options
             chrome.storage.sync.get(["hours", "minutes"], function (data) {
                 let optionMinutes = data.hours * 60 + data.minutes;
-
-                // Send a message to background.js to update the notification
-                chrome.runtime.sendMessage({
-                    message: "updateTimer",
-                    totalMinutes: totalMinutes,
-                });
-
-                if (totalMinutes <= optionMinutes) {
-                    targetButton.click();
-                    chrome.runtime.sendMessage({ message: "timerEnded" });
-                    stopWatching(button);
-                }
+                handleOptionMinutes(
+                    totalMinutes,
+                    optionMinutes,
+                    button,
+                    targetButton
+                );
             });
         }
     }, 1000);

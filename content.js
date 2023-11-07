@@ -16,6 +16,8 @@ const BUTTON_STYLES = {
 let intervalId = null;
 
 let initialMinutes;
+let lastRemainingMinutes;
+let lastRemainingMinutesTime;
 
 window.addEventListener("load", event => {
     let button = document.createElement("button");

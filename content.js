@@ -73,6 +73,10 @@ function handleOptionMinutes(
         // Convert maxDelay from minutes to seconds and apply a random delay
         let maxDelaySeconds = maxDelayMinutes * 60;
         let delayInSeconds = Math.floor(Math.random() * (maxDelaySeconds + 1));
+        // Log the delay before executing the setTimeout
+        console.log(
+            `Delay set for ${delayInSeconds} seconds before clicking the target button.`
+        );
         setTimeout(() => {
             targetButton.click();
             chrome.runtime.sendMessage({ message: "timerEnded" });

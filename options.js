@@ -3,14 +3,19 @@ const DEFAULT_OPTIONS = {
     playSound: true,
     hours: 0,
     minutes: 0,
+    maxDelay: 0,
 };
 
 // When the options page is loaded, get the current options and update the UI
-chrome.storage.sync.get(["playSound", "hours", "minutes"], function (data) {
-    document.getElementById("playSound").checked = data.playSound;
-    document.getElementById("hours").value = data.hours.toString();
-    document.getElementById("minutes").value = data.minutes.toString();
-});
+chrome.storage.sync.get(
+    ["playSound", "hours", "minutes", "maxDelay"],
+    function (data) {
+        document.getElementById("playSound").checked = data.playSound;
+        document.getElementById("hours").value = data.hours.toString();
+        document.getElementById("minutes").value = data.minutes.toString();
+        document.getElementById("maxDelay").value = data.maxDelay.toString();
+    }
+);
 
 // When the checkboxes are clicked, save the new options
 document.getElementById("playSound").addEventListener("change", function (e) {
@@ -25,6 +30,10 @@ document.getElementById("minutes").addEventListener("change", function (e) {
     chrome.storage.sync.set({ minutes: parseInt(e.target.value, 10) });
 });
 
+document.getElementById("maxDelay").addEventListener("change", function (e) {
+    chrome.storage.sync.set({ maxDelay: parseInt(e.target.value, 10) });
+});
+
 // When the reset button is clicked, reset the options to default
 document.getElementById("reset").addEventListener("click", function () {
     chrome.storage.sync.set(DEFAULT_OPTIONS, function () {
@@ -35,5 +44,7 @@ document.getElementById("reset").addEventListener("click", function () {
             DEFAULT_OPTIONS.hours.toString();
         document.getElementById("minutes").value =
             DEFAULT_OPTIONS.minutes.toString();
+        document.getElementById("maxDelay").value =
+            DEFAULT_OPTIONS.maxDelay.toString();
     });
 });

@@ -1,20 +1,36 @@
 <!DOCTYPE html>
 <html>
-    <body>
+
+<body>
+    <div>
         <label>
             <input type="checkbox" id="playSound" />
             Play sound when timer ends
         </label>
+    </div>
+    <div>
         <label>
             <input type="number" id="hours" min="0" max="23" />
             Hours remaining
         </label>
+    </div>
+    <div>
         <label>
             <input type="number" id="minutes" min="0" max="59" />
             Minutes remaining
         </label>
+    </div>
+    <div>
+        <label>
+            Max delay (minutes):
+            <input type="number" id="maxDelay" min="0" max="60" />
+        </label>
+    </div>
+    <div>
         <button id="reset">Reset</button>
+    </div>
 
-        <script src="options.js"></script>
+    <script src="options.js"></script>
     </body>
+
 </html>

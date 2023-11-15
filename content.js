@@ -34,9 +34,10 @@ window.addEventListener("load", event => {
 
 // Function to handle remaining minutes
 function handleRemainingMinutes(remainingMinutes) {
-    // If remainingMinutes hasn't changed in over 1 minute
-    if (remainingMinutes === lastRemainingMinutes && Date.now() - lastRemainingMinutesTime > 60000) {
-        // Find the SVG with data-icon="sync-alt" and click on its parent element
+    if (
+        remainingMinutes === lastRemainingMinutes &&
+        Date.now() - lastRemainingMinutesTime > 60000
+    ) {
         let syncIcon = document.querySelector('svg[data-icon="sync-alt"]');
         if (syncIcon && syncIcon.parentElement) {
             syncIcon.parentElement.click();
@@ -47,23 +48,32 @@ function handleRemainingMinutes(remainingMinutes) {
     }
 }
 
-// Function to handle option minutes
-function handleOptionMinutes(totalMinutes, optionMinutes, button, targetButton) {
-    // Calculate remaining time
+// Function to handle option minutes and max delay
+function handleOptionMinutes(
+    totalMinutes,
+    optionMinutes,
+    maxDelayMinutes,
+    button,
+    targetButton
+) {
     let remainingMinutes = Math.max(0, totalMinutes - optionMinutes);
 
     handleRemainingMinutes(remainingMinutes);
 
-    // Send a message to background.js to update the notification
     chrome.runtime.sendMessage({
         message: "updateTimer",
         totalMinutes: totalMinutes,
     });
 
     if (totalMinutes <= optionMinutes) {
-        targetButton.click();
-        chrome.runtime.sendMessage({ message: "timerEnded" });
-        stopWatching(button);
+        // Convert maxDelay from minutes to seconds and apply a random delay
+        let maxDelaySeconds = maxDelayMinutes * 60;
+        let delayInSeconds = Math.floor(Math.random() * (maxDelaySeconds + 1));
+        setTimeout(() => {
+            targetButton.click();
+            chrome.runtime.sendMessage({ message: "timerEnded" });
+            stopWatching(button);
+        }, delayInSeconds * 1000); // Convert seconds to milliseconds
     }
 }
 
@@ -83,16 +93,20 @@ function startWatching(button, targetButton) {
                 });
             }
 
-            // Get the options
-            chrome.storage.sync.get(["hours", "minutes"], function (data) {
-                let optionMinutes = data.hours * 60 + data.minutes;
-                handleOptionMinutes(
-                    totalMinutes,
-                    optionMinutes,
-                    button,
-                    targetButton
-                );
-            });
+            chrome.storage.sync.get(
+                ["hours", "minutes", "maxDelay"],
+                function (data) {
+                    let optionMinutes = data.hours * 60 + data.minutes;
+                    let maxDelayMinutes = data.maxDelay;
+                    handleOptionMinutes(
+                        totalMinutes,
+                        optionMinutes,
+                        maxDelayMinutes,
+                        button,
+                        targetButton
+                    );
+                }
+            );
         }
     }, 1000);
     button.innerHTML = "Stop Auto-submit";
@@ -105,8 +119,6 @@ function stopWatching(button) {
     intervalId = null;
     button.innerHTML = "Start Auto-submit Watcher";
     button.style.backgroundColor = "#4CAF50"; // Material Design green
-
-    // Send a message to background.js to clear the progress notification
     chrome.runtime.sendMessage({ message: "stopWatching" });
 }
 
@@ -130,8 +142,6 @@ function parseTime(timer) {
 
 function toggleWatching() {
     let button = this;
-
-    // Select the Submit button
     let allButtons = Array.from(document.querySelectorAll("button"));
     let targetButton = allButtons.find(
         btn => btn.textContent.trim() === SUBMIT_BUTTON_TEXT

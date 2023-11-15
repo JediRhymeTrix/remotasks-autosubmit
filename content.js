@@ -83,43 +83,57 @@ function handleOptionMinutes(
     }
 }
 
+// Function to update initial minutes and send a message
+function updateInitialMinutes(totalMinutes) {
+    initialMinutes = totalMinutes;
+    chrome.runtime.sendMessage({
+        message: "initialMinutes",
+        initialMinutes: initialMinutes,
+    });
+}
+
+// Function to get option minutes and max delay, then handle them
+function getAndHandleOptions(totalMinutes, button, targetButton) {
+    if (initialMinutes === undefined) {
+        updateInitialMinutes(totalMinutes);
+    }
+
+    chrome.storage.sync.get(["hours", "minutes", "maxDelay"], function (data) {
+        let optionMinutes = data.hours * 60 + data.minutes;
+        let maxDelayMinutes = data.maxDelay;
+        handleOptionMinutes(
+            totalMinutes,
+            optionMinutes,
+            maxDelayMinutes,
+            button,
+            targetButton
+        );
+    });
+}
+
+function performWatchCycle(button, targetButton) {
+    if (isDelayActive || !findTimer()) return;
+
+    let totalMinutes = parseTime(findTimer());
+    getAndHandleOptions(totalMinutes, button, targetButton);
+}
+
 // Function to start watching
 function startWatching(button, targetButton) {
-    intervalId = setInterval(() => {
-        // Skip this iteration if the delay is active
-        if (isDelayActive) {
-            return;
-        }
+    if (intervalId !== null) {
+        return; // Prevent multiple intervals
+    }
 
-        let timer = findTimer();
+    intervalId = setInterval(
+        performWatchCycle.bind(null, button, targetButton),
+        1000
+    );
 
-        if (timer) {
-            let totalMinutes = parseTime(timer);
+    updateButtonToWatchingState(button);
+}
 
-            if (initialMinutes === undefined) {
-                initialMinutes = totalMinutes;
-                chrome.runtime.sendMessage({
-                    message: "initialMinutes",
-                    initialMinutes: initialMinutes,
-                });
-            }
-
-            chrome.storage.sync.get(
-                ["hours", "minutes", "maxDelay"],
-                function (data) {
-                    let optionMinutes = data.hours * 60 + data.minutes;
-                    let maxDelayMinutes = data.maxDelay;
-                    handleOptionMinutes(
-                        totalMinutes,
-                        optionMinutes,
-                        maxDelayMinutes,
-                        button,
-                        targetButton
-                    );
-                }
-            );
-        }
-    }, 1000);
+// Function to update button to watching state
+function updateButtonToWatchingState(button) {
     button.innerHTML = "Stop Auto-submit";
     button.style.backgroundColor = "#F44336"; // Material Design red
 }

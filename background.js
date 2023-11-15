@@ -1,4 +1,4 @@
-const DEFAULT_OPTIONS = { playSound: true, hours: 0, minutes: 0 };
+const DEFAULT_OPTIONS = { playSound: true, hours: 0, minutes: 0, maxDelay: 0 };
 
 let tabId;
 let progressTabId; // tab ID for the progress notification

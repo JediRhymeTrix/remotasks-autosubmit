@@ -9,13 +9,13 @@ This Chrome extension automatically submits tasks on Remotasks when the timer en
 - Sound notification: The extension can play a sound when the timer ends.
 - Options page: You can customize the extension's behavior on the options page.
 - Customizable timer: You can set a custom time remaining for the extension to submit. The extension will submit when the timer is less than or equal to what is set in the options. The default value is 0 hours and 0 minutes.
-- Customizable delay: You can set a custom delay for the extension to submit after the timer ends. The default value is 0 seconds.
+- Customizable delay: You can set a custom delay for the extension to submit after the timer ends. The default value is 0 minutes.
 
 ## Options
 
 - Play sound when timer ends: You can choose whether to play a sound when the timer ends. This option is enabled by default. You can change it on the extension's options page.
 - Set time remaining: You can set a custom time remaining for the extension to submit. The default value is 0 hours and 0 minutes.
-- Set max delay for submission: You can set a custom delay for the extension to submit after the timer ends. The default value is 0 seconds. You can change this in the extension's options page.
+- Set max delay for submission: You can set a custom delay for the extension to submit after the timer ends. The default value is 0 minutes. You can change this in the extension's options page.
 
 ## Installation
 

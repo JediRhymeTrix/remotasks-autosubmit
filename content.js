@@ -14,6 +14,7 @@ const BUTTON_STYLES = {
 };
 
 let intervalId = null;
+let isDelayActive = false;
 
 let initialMinutes;
 let lastRemainingMinutes;
@@ -66,13 +67,18 @@ function handleOptionMinutes(
     });
 
     if (totalMinutes <= optionMinutes) {
+        // Set the flag to true to indicate the delay is active
+        isDelayActive = true;
+
         // Convert maxDelay from minutes to seconds and apply a random delay
         let maxDelaySeconds = maxDelayMinutes * 60;
         let delayInSeconds = Math.floor(Math.random() * (maxDelaySeconds + 1));
         setTimeout(() => {
             targetButton.click();
             chrome.runtime.sendMessage({ message: "timerEnded" });
-            stopWatching(button);
+            // Clear the flag after the delay completes and the button is clicked
+            isDelayActive = false;
+            stopWatching(button); // This will clear the interval
         }, delayInSeconds * 1000); // Convert seconds to milliseconds
     }
 }
@@ -80,6 +86,11 @@ function handleOptionMinutes(
 // Function to start watching
 function startWatching(button, targetButton) {
     intervalId = setInterval(() => {
+        // Skip this iteration if the delay is active
+        if (isDelayActive) {
+            return;
+        }
+
         let timer = findTimer();
 
         if (timer) {
@@ -115,11 +126,13 @@ function startWatching(button, targetButton) {
 
 // Function to stop watching
 function stopWatching(button) {
-    clearInterval(intervalId);
-    intervalId = null;
-    button.innerHTML = "Start Auto-submit Watcher";
-    button.style.backgroundColor = "#4CAF50"; // Material Design green
-    chrome.runtime.sendMessage({ message: "stopWatching" });
+    if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+        button.innerHTML = "Start Auto-submit Watcher";
+        button.style.backgroundColor = "#4CAF50"; // Material Design green
+        chrome.runtime.sendMessage({ message: "stopWatching" });
+    }
 }
 
 // Function to find the timer on the page

@@ -16,7 +16,9 @@
                 "*://*.remotasks.com/tasks",
                 "*://remotasks.com/tasks",
                 "*://*.remotasks.com/*/tasks",
-                "*://remotasks.com/*/tasks"
+                "*://remotasks.com/*/tasks",
+                "*://app.tryoutlier.com/*/expert/tasks",
+                "*://app.tryoutlier.com/expert/tasks"
             ],
             "js": ["content.js"]
         }

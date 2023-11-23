@@ -1,6 +1,6 @@
 # Remotasks Auto-submit
 
-This Chrome extension automatically submits tasks on Remotasks when the timer ends.
+This Chrome extension automatically submits tasks on Remotasks and Outlier when the timer ends.
 
 ## Features
 
@@ -27,7 +27,7 @@ This Chrome extension automatically submits tasks on Remotasks when the timer en
 
 ## Usage
 
-1. Start a task on Remotasks.
+1. Start a task on Remotasks/Outlier.
 2. The extension will automatically submit the task when the timer ends.
 3. If the "Play sound when timer ends" option is enabled, the extension will play a sound when the timer ends.
 4. If the "Set time remaining" option is set, the extension will submit the task when the timer is less than or equal to what is set in the options.

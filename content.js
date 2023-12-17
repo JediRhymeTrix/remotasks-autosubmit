@@ -211,9 +211,12 @@ function parseTime(timer) {
 function toggleWatching() {
     let button = this;
     let allButtons = Array.from(document.querySelectorAll("button"));
-    let targetButton = allButtons.find(
-        btn => btn.textContent.trim() === SUBMIT_BUTTON_TEXT
-    );
+    let targetButton = allButtons.find(btn => {
+        return (
+            btn.textContent.trim() === SUBMIT_BUTTON_TEXT &&
+            !btn.querySelector("button") // Ensure that no button is nested inside
+        );
+    });
 
     if (intervalId) {
         stopWatching(button);

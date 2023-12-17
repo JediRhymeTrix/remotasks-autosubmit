@@ -153,14 +153,51 @@ function stopWatching(button) {
     }
 }
 
-// Function to find the timer on the page
-function findTimer() {
+// Function to find the timer in span elements
+function findTimerInSpans() {
     let allSpans = Array.from(document.querySelectorAll("span"));
-    return allSpans.find(
-        span =>
-            span.textContent.includes("hours") &&
-            span.textContent.includes("minute")
-    );
+    return allSpans.find(span => span.textContent.includes("hour") && span.textContent.includes("minute"));
+}
+
+// Function to create a mock timer element
+function createMockTimer(hours, minutes) {
+    return {
+        textContent: `${hours} hours, ${minutes} minutes`,
+    };
+}
+
+function extractTime(matches) {
+    return {
+        hours: matches[1] || "0",
+        minutes: matches[2] || "0",
+    };
+}
+
+
+// Function to find the timer in the header
+function findTimerInHeader() {
+    const divs = Array.from(document.querySelectorAll("div.shrink-0"));
+    const timerRegex = /Expires in (?:(\d+) hour[s]?, )?(?:(\d+) minute[s]?)?/;
+
+    for (const div of divs) {
+        const matches = div.textContent.match(timerRegex);
+        if (matches) {
+            const { hours, minutes } = extractTime(matches);
+            return createMockTimer(hours, minutes);
+        }
+    }
+
+    return null;
+}
+
+// Main function to find the timer
+function findTimer() {
+    let timerSpan = findTimerInSpans();
+    if (timerSpan) {
+        return timerSpan;
+    }
+
+    return findTimerInHeader();
 }
 
 // Function to parse the time from the timer text

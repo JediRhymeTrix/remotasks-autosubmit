@@ -37,6 +37,10 @@ This Chrome extension automatically submits tasks on Remotasks and Outlier when 
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
+## Disclaimer
+
+The use of this tool is at your own risk. I am not responsible for any consequences that may arise from its use, including but not limited to account suspension or flagging by the platform. This tool is intended to provide users with additional capabilities to manage their work more effectively in the face of exploitative measures by these platforms that may result in underpayment. It is designed to (somewhat) level the playing field and should be used ethically and responsibly.
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
